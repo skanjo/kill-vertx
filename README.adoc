@@ -1,0 +1,6 @@
+= Kill Vert.x
+
+Determine the kill behavior of java based Vert.x app running on *nix when sent kill signals to discover best way to
+properly shutdown a Vert.x app. Proper kill behavior is considered running shutdown hooks and calling stop on all
+deployed verticles. It is assumed that the Vert.x app is started with traditional main method rather than using Vert.x
+Launcher.
