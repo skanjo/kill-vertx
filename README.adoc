@@ -4,3 +4,49 @@ Determine the kill behavior of java based Vert.x app running on *nix when sent k
 properly shutdown a Vert.x app. Proper kill behavior is considered running shutdown hooks and calling stop on all
 deployed verticles. It is assumed that the Vert.x app is started with traditional main method rather than using Vert.x
 Launcher.
+
+= Kill Signals
+The most useful kill signals are SIGHUP (1), SIGINT (2), SIGKILL (9), and SIGTERM (15).
+
+== SIGHUP
+Signal sent to a process to "hang up" when its controlling terminal is closed.
+
+== SIGINT
+Signal sent to a process by its controlling terminal when a user wants to end a process. This is usually CTRL+C.
+
+== SIGKILL
+Signal sent to a process to terminate immediately. Unlike SIGTERM or SIGINT the signal cannot be caught or ignored.
+
+== SIGTERM
+Signal sent to a process to request termination. It can be caught or ignored.
+
+= Testing Shutdown
+In one terminal run the application using the following command
+
+[source]
+----
+java -jar kill-vertx-1.0.0-SNAPSHOT-exec.jar; echo $?
+----
+
+and then in another terminal send the process a kill signal to determine how the process shuts down using this command
+
+[source]
+----
+kill -SIGTERM $(jps | grep kill-vertx | cut -f 1 -d' ')
+----
+
+= Testing Results
+
+[width="30%",options="header"]
+|=========================================================
+|Signal Name | Signal # |Terminate |Shutdown Hook |Vert.x Stop| Status Code
+|SIGHUP |1  |Yes |Yes |Yes | 129
+|SIGINT |2  |Yes |Yes |Yes | 130
+|SIGKILL |9  |Yes |No |No | 137
+|SIGTERM |15  |Yes |Yes |Yes | 143
+|=========================================================
+
+= Systemd
+Define a generic service that can apply in most cases for a Vert.x java based server app.
+
+
